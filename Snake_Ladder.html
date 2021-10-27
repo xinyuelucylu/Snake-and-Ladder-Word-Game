@@ -1,0 +1,148 @@
+<!--Title: Assignment-1-->
+
+<!--Author: Xinyue (Lucy) Lu-->
+
+<!--Objective: Used HTML and JavaScript to make a simple Snake and Ladder game, which the
+snakes move player back and ladders move player forward. -->
+
+<!--Design Description: 
+	Data modules: 
+		var p (arrays of players)
+		var lad (arrays of ladders)
+		var snake (arrays of snakes)
+	Code modules: 
+		Init() (function to initialize all var)
+		Dice() (function to roll the dice(0-6), contain some math functions)
+		Reset() (function to reset the game, contain Init() to set var to initial values)
+		LadderNSnake() (function contains a loop which called when players met ladders 
+						or snakes, only for same length arrays of snakes and ladders)
+		Turn() (function to switch turn by clicking the button, contains Game())
+		Game() (function of one turn)
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Snake and Ladder</title>
+
+<script>
+var dice;
+var pt=0;
+var p=[];
+var lad=[];
+var snake=[];
+var gameOver = false;
+
+function Init()
+{
+	for(j=0;j<3;j++){
+		p[j]=0;}
+
+	lad=[{start:9,end:30},{start:15,end:58},{start:21,end:42},{start:49,end:71},{start:55,end:87},
+	{start:64,end:99},{start:69,end:94}];
+
+	snake=[{start:28,end:6},{start:61,end:4},{start:97,end:32},{start:68,end:34},{start:82,end:56},
+	{start:89,end:50},{start:45,end:12}];
+}
+
+function Dice()
+{
+	dice = 6*Math.random();
+	dice = Math.floor(dice);
+    dice = dice + 1;
+    dicenum.innerHTML = "Dice Number: " + dice;
+}
+
+function Reset()
+{
+	Init();
+	pt = 0;
+    player1.innerHTML = "Player1";
+    player2.innerHTML = "Player2";
+    player3.innerHTML = "Player3";
+    whosturn.innerHTML = "Let's start the game! Player1's turn!";
+    gameOver = false;
+}
+
+function LadderNSnake(x)
+{
+	for(j = 0; j < 7; j++)
+	{
+		if(x == lad[j].start)
+			return {player: lad[j].end, line: " Climbed up a ladder! Forward to " + lad[j].end}
+		else if(x == snake[j].start)
+			return {player: snake[j].end, line: " Slide down a snake! Back to " + snake[j].end}
+	}
+	return {player: x , line: ""};
+}
+
+function Turn()
+{
+	Game(pt);
+	
+	if(pt<2)
+		pt++;
+	else
+		pt=0;	
+}
+
+function Game(i)
+{
+	if(gameOver == true)
+    	return;
+	
+    var n=i+1;  
+    var t=n+1;
+    if(t==4){
+    t=1;}
+    
+	Dice();
+	var line="";
+	
+	if(p[i] > 93 && dice > (100 - p[i]))
+		line += "Player" + n + ": " + p[i] + " Remain.";
+	else
+	{
+    	p[i] = p[i] + dice;
+		line += "Player" + n + ": " + p[i];
+		let value = LadderNSnake(p[i])
+		p[i] = value.player;
+		line += value.line;
+	}
+	
+  	whosturn.innerHTML="Now it's player" + t + "'s turn! Click to roll the dice!";
+  	
+  	if(p[i] == 100)
+    {
+    	line += " You won!";
+       	gameOver = true;
+       	whosturn.innerHTML="Game Over! Player" + n + " won the game!" ;
+    }
+	
+	document.getElementById('player'+n).innerHTML = line;
+}
+
+</script>
+
+</head>
+
+<body onload="Init()">
+
+<h2>Simple Snake and Ladder Game</h2>
+
+<h3 id="whosturn">Let's start the game! Now is Player1's turn!</h3>
+
+<p id="player1">Player1</p>
+
+<p id="player2">Player2</p>
+
+<p id="player3">Player3</p>
+
+<button onclick="Turn()">Roll the dice!</button>
+<button onclick="Reset()">Replay</button>
+
+<p id="dicenum"></p>
+
+</body>
+</html> 
